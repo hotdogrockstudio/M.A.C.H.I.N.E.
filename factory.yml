@@ -1,0 +1,33 @@
+name: Factory Shift
+on:
+  schedule:
+    - cron: '0 * * * *' # This triggers the machine every hour
+  workflow_dispatch: # Allows you to trigger it manually from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Allows the bot to push images and memory back to the repo
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4 # Pulls your code into the cloud runner
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' # Ensures a stable environment
+
+      - name: Install Dependencies
+        run: pip install requests numpy pillow
+
+      - name: Run Factory Shift
+        run: python Factory_13.py # Executes your main script
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "Factory-Bot"
+          git config --global user.email "bot@factory.internal"
+          git add .
+          git commit -m "🏭 Production Cycle Complete" || echo "No changes to commit"
+          git push # Saves the new image and updated memory
